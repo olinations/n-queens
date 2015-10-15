@@ -1,0 +1,16 @@
+PROBLEM: finds a valid solution for n rooks of 1-8
+// return a matrix (an array of arrays) representing a single nxn chessboard, with n rooks 
+placed such that none of them can attack each other
+
+INPUT: 
+OUTPUT: 
+
+OVERVIEW:
+
+1. 
+2. 
+3. 
+4. 
+
+PSEUDO-CODE:
+
