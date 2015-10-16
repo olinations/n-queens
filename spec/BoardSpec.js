@@ -48,8 +48,8 @@ describe("Board", function() {
 
   describe("Board with major diagonal conflicts", function() {
     verifyConflictTypes(['majorDiagonal', 'queens'], [
+      [0, 1, 0, 0],
       [0, 0, 1, 0],
-      [0, 0, 0, 1],
       [0, 0, 0, 0],
       [0, 0, 0, 0]
     ]);
@@ -62,5 +62,33 @@ describe("Board", function() {
       [1, 0, 0, 0],
       [0, 0, 0, 0]
     ]);
+
+ //    //board specs
+ //    describe("Board with major diagonal conflicts", function() {
+ //   verifyConflictTypes(['majorDiagonal', 'queens'], [
+ //     [0, 0, 0, 0],
+ //     [0, 1, 0, 0],
+ //     [0, 0, 0, 0],
+ //     [0, 0, 0, 1]
+ //   ]);
+ // });
+
+ // describe("Board with major diagonal conflicts", function() {
+ //   verifyConflictTypes(['majorDiagonal', 'queens'], [
+ //     [0, 0, 0, 0],
+ //     [0, 0, 0, 0],
+ //     [1, 0, 0, 0],
+ //     [0, 1, 0, 0]
+ //   ]);
+ // });
+
+ // describe("Board with major diagonal conflicts", function() {
+ //   verifyConflictTypes(['majorDiagonal', 'queens'], [
+ //     [0, 0, 0, 0],
+ //     [1, 0, 0, 0],
+ //     [0, 0, 0, 0],
+ //     [0, 0, 1, 0]
+ //   ]);
+ // });
   });
 });

@@ -79,22 +79,19 @@
     //
     // test if a specific row on this board contains a conflict
     hasRowConflictAt: function(rowIndex) {
-      var row = this.get(rowIndex+'');
-      var totals = _.reduce(row, function(prevValue, currValue){
-        prevValue = prevValue + currValue;
-        return prevValue;
-      }, 0);
-      return (totals > 1);
+      // 'this' is bound to the board at call time
+      var row = this.get(rowIndex);
+      return _.reduce(row, function(accumulator, next) {
+        return accumulator + next;
+      }) > 1;
     },
 
     // test if any rows on this board contain conflicts
     hasAnyRowConflicts: function() {
-      //Access number of rows
-      var rows = this.get('n');
-      //iterate over each row
-      for (var r = 0; r < rows; r++){
-        //Test hasRowConflictAt
-        if (this.hasRowConflictAt(r)){
+
+      var n = this.get('n');
+      for (var i = 0; i < n; i++) {
+        if (this.hasRowConflictAt(i)) {
           return true;
         }
       }
@@ -106,38 +103,23 @@
     //
     // test if a specific column on this board contains a conflict
     hasColConflictAt: function(colIndex) {
-      //Declare a variable and assign it the board size
-      var boardSize = this.get('n');
-      //Declare a variable to hold sum
-      var sum = 0;
-      //Declare variable to temporarily hold row
-      var row = [];
+      var board = this.rows(),
+        n = this.get('n'),
+        sum = 0;
 
-      //Iterate over the rows of the board
-      for (var r = 0; r < boardSize; r++){
-        //if (sum > 1)
-        if (sum > 1){
-          return true;
-        }
-        //otherwise
-        else {
-          //pull out current row
-          row = this.get(r);
-          //add row[index] to sum
-          sum += row[colIndex];
-        }
+      for (var i = 0; i < n; i++) {
+        sum += board[i][colIndex];
       }
-      return false;
+      // sum as we go
+      return sum > 1;
     },
 
     // test if any columns on this board contain conflicts
     hasAnyColConflicts: function() {
-      //Declare a variable to hold the board size
-      var boardSize = this.get('n');
-      //iterate over every column
-      for( var i = 0; i < boardSize; i++){
-        //if (call hasColConflictAt)
-        if(this.hasColConflictAt(i)){
+
+      var n = this.get('n');
+      for (var i = 0; i < n; i++) {
+        if (this.hasColConflictAt(i)) {
           return true;
         }
       }
@@ -151,43 +133,31 @@
     //
     // test if a specific major diagonal on this board contains a conflict
     hasMajorDiagonalConflictAt: function(majorDiagonalColumnIndexAtFirstRow) {
-      //TODO: make it check only 1 row and the next row. Not every row
-      //Declare a variable and assign it the board size
-      var boardSize = this.get('n');
-      //Declare a variable to hold the sum
-      var sum = 0;
-      //Declare a variable for the row
-      var row = 0;
-      //Declare a variable column index
-      var colIndex = majorDiagonalColumnIndexAtFirstRow;
+      var board = this.rows(),
+        row = 0,
 
-      //iterate over each row starting at column index
-      for (var r = 0; r < boardSize; r++){
-        //if sum is > 1
-        if(sum > 1){
-          return true;
-        } else {
-          //Add prev index++ to the sum
-          row = this.get(r);
-          sum += row[colIndex];
-          if(colIndex <= boardSize){
-            colIndex++;
-          }
+        colIndex = majorDiagonalColumnIndexAtFirstRow,
+        n = this.get('n'),
+        sum = 0;
+    
+      while (colIndex < n && row < n) {
+        if(colIndex >= 0){
+          sum += board[row][colIndex];
         }
+        row++;
+        colIndex++;
       }
-      return false;
-
+      return sum > 1;
     },
 
     // test if any major diagonals on this board contain conflicts
     hasAnyMajorDiagonalConflicts: function() {
-      //declare a variable and assign it the board size
-      var boardSize = this.get('n');
-      //iterate over every row up to the board size
-      for (var r = 0; r < boardSize; r++)
-        //if a conflict exists on current diagonal
-      if (this.hasMajorDiagonalConflictAt(r)){
-        return true;
+      var n = this.get('n');
+      //the spec puts in funny numbers so have to adjust for that
+      for (var i = -n + 2; i < n; i++) {
+        if (this.hasMajorDiagonalConflictAt(i)) {
+          return true;
+        }
       }
       return false;
     },
@@ -199,50 +169,40 @@
     //
     // test if a specific minor diagonal on this board contains a conflict
     hasMinorDiagonalConflictAt: function(minorDiagonalColumnIndexAtFirstRow) {
-      //Declare a variable to hold board size
-      var boardSize = this.get('n');
-      //declare a variable to hold the row
-      var row = this.get();
-      //Declare a variable to hold sum
-      var sum = 0;
-      //Declare a variable to hold index
-      var colIndex = minorDiagonalColumnIndexAtFirstRow || boardSize;
 
-      //iterate backward through first row
-      for (var r = 0; r < boardSize; r++){
-        //if sum is greater than 1
-        if (sum > 1) {
-          return true;
+      var board = this.rows(),
+        row = 0,
+  
+        colIndex = minorDiagonalColumnIndexAtFirstRow,
+        n = this.get('n');
+        sum = 0;
+
+      while (colIndex >= 0 && row < n) {
+        if(colIndex < n){
+          sum += board[row][colIndex];
         }
-        //Add in value at next row,  index - 1
-        sum += this.get(r)[colIndex];
-        if(colIndex > 0){
-          colIndex--;
-        } else if(colIndex = 0){
-          break;
-        }
+        row++;
+        colIndex--;
       }
-      return false;
+      return sum > 1;
     },
 
     // test if any minor diagonals on this board contain conflicts
     hasAnyMinorDiagonalConflicts: function() {
-      //Declare a variable to hold board size
-      var boardSize = this.get('n');
-      //Iterate over rows
-      for(var r = 0; r < boardSize; r++){
-        //if (Invoke the At function for the current row)
-        if(this.hasMinorDiagonalConflictAt(r)){
+      var n = this.get('n');
+      //console.log( 2 * n - 2)
+      for (var i = 2 * n - 2; i >= 0; i--) {
+        if (this.hasMinorDiagonalConflictAt(i)) {
           return true;
         }
       }
       return false;
     }
-
+});
     /*--------------------  End of Helper Functions  ---------------------*/
 
 
-  });
+  
 
   var makeEmptyMatrix = function(n) {
     return _(_.range(n)).map(function() {
